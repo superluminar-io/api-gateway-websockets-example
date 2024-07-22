@@ -4,8 +4,9 @@ import {NodejsFunction} from 'aws-cdk-lib/aws-lambda-nodejs';
 import {AttributeType, TableV2} from 'aws-cdk-lib/aws-dynamodb';
 import {WebSocketApi, WebSocketStage} from 'aws-cdk-lib/aws-apigatewayv2';
 import {WebSocketLambdaIntegration} from 'aws-cdk-lib/aws-apigatewayv2-integrations';
-import { Runtime} from 'aws-cdk-lib/aws-lambda';
+import {Runtime} from 'aws-cdk-lib/aws-lambda';
 import {PolicyStatement} from 'aws-cdk-lib/aws-iam';
+import {CfnOutput} from 'aws-cdk-lib';
 
 export class WebsocketsStack extends cdk.Stack {
     constructor(scope: Construct, id: string, props?: cdk.StackProps) {
@@ -76,5 +77,9 @@ export class WebsocketsStack extends cdk.Stack {
         whoAmIHandler.addToRolePolicy(
             new PolicyStatement({actions: ['execute-api:ManageConnections'], resources: [connectionsArn]})
         );
+
+        new CfnOutput(this, 'WebSocketUrl', {
+            value: `${webSocketApi.apiEndpoint}/${apiStage.stageName}`
+        })
     }
 }
